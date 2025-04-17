@@ -1,6 +1,6 @@
-# IMU_Fusion_SYC   v1.0.0
+# IMU_Fusion_SYC   v1.0.1
 
-HSI 设置为24M，HCLK设置为48M
+HSI 设置为16M，HCLK设置为16M
 
 ## Licence
 
