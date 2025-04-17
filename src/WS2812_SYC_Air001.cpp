@@ -1,13 +1,14 @@
 /*
  * WS2812_SYC_Air001 - 基于Air001的ws2812驱动库
- * Created by Vegetable_SYC, 2025-04-13
- * Version: 0.0.1
+ * Created by 沈已成, 2025-04-13
+ * Version: 1.0.1
  * License: MIT
  * GitHub: https://github.com/Eason-SYC/WS2812_SYC_Air001
  * 
  * 功能：
  * - 支持显示多种颜色
  * - 支持显示图片
+ * - 支持彩虹灯效果
  */
 #include "WS2812_SYC_Air001.h"
 
@@ -47,31 +48,34 @@ void SYC_WS2812::setBrightness(uint8_t brightness)
 }
 
 // 设置彩灯颜色
-bool SYC_WS2812::setWs2812Color(int ws2812_num, uint32_t rgb)
+void SYC_WS2812::setWs2812Color(int ws2812_num, uint32_t rgb)
 {
     uint8_t color_rgb[3];
-    color_rgb[r] = (rgb >> 16) * WS2812_brightness / 255;
-    color_rgb[g] = (rgb >> 8) * WS2812_brightness / 255;
-    color_rgb[b] = rgb * WS2812_brightness / 255;
 
-    uint32_t color = color_rgb[0] << 16 | color_rgb[1] << 8 | color_rgb[2] ;
+    color_rgb[r] = rgb >> 16;
+    color_rgb[g] = rgb >> 8;
+    color_rgb[b] = rgb;
+
+    color_rgb[r] = color_rgb[r] * WS2812_brightness / 255;
+    color_rgb[g] = color_rgb[g] * WS2812_brightness / 255;
+    color_rgb[b] = color_rgb[b] * WS2812_brightness / 255;
+  
+    uint32_t color = (color_rgb[r] << 16) | (color_rgb[g] << 8) | (color_rgb[b]); 
+
     led_data[ws2812_num] = color;
-
-    return 1;
 }
 
 // 设置全部彩灯颜色
-bool SYC_WS2812::setAllWs2812Color(int ws2812_num, uint32_t rgb)
+void SYC_WS2812::setAllWs2812Color(int ws2812_num, uint32_t rgb)
 {
     for (int i = 0; i < ws2812_num; i++)
     {
         setWs2812Color(i, rgb);
     }
-    return 1;
 }
 
 // 显示彩灯颜色
-bool SYC_WS2812::Ws2812_show()
+void SYC_WS2812::Ws2812_show()
 {
   uint32_t value = 0;
   for (int i = 0; i < WS2812_Counts; i++){
@@ -89,7 +93,6 @@ bool SYC_WS2812::Ws2812_show()
     }
   }
   delayMicroseconds(60);
-  return 1;
 }
 
 // 清除所有彩灯的颜色
@@ -132,4 +135,29 @@ void SYC_WS2812::Draw(uint32_t *pic)
     k = k >> 1;
   }
   Ws2812_show();
+}
+
+uint32_t SYC_WS2812::Wheel(byte pos) 
+{
+    uint32_t WheelPos = pos % 0xff;
+    if (WheelPos < 85) {
+        return ((255 - WheelPos * 3) << 16) | ((WheelPos * 3) << 8);
+    }
+    if (WheelPos < 170) {
+        WheelPos -= 85;
+        return (((255 - WheelPos * 3) << 8) | (WheelPos * 3));
+    }
+    WheelPos -= 170;
+    return ((WheelPos * 3) << 16 | (255 - WheelPos * 3));
+}
+
+/* 使用示例 */
+void SYC_WS2812::Rainbow(uint8_t Rainbow_speed) 
+{
+  for (int j = 0; j < 255; j += Rainbow_speed) {
+    for (int i = 0; i < 64; i++) {
+      setWs2812Color(i, Wheel((i * 256 / 64 + j) & 255));
+    }
+    Ws2812_show();
+  }  
 }

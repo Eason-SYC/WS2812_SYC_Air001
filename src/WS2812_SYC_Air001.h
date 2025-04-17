@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <SPI.h>
 
-#define MAX_NUM 128
+#define MAX_NUM 64
 
 // 使用枚举定义彩灯颜色模式
 enum WS2812_TYPE
@@ -37,10 +37,12 @@ class SYC_WS2812
     void setType();
     void setBrightness(uint8_t brightness);
     void clearWs2812();
-    bool setWs2812Color(int ws2812_num, uint32_t rgb);
-    bool setAllWs2812Color(int ws2812_num, uint32_t rgb);
-    bool Ws2812_show();
+    void setWs2812Color(int ws2812_num, uint32_t rgb);
+    void setAllWs2812Color(int ws2812_num, uint32_t rgb);
+    void Ws2812_show();
     void Draw(uint32_t *pic);
+    void Rainbow(uint8_t Rainbow_speed = 2);
+    uint32_t Wheel(byte pos);
   private:
   
     uint16_t WS2812_Counts;     // 彩灯数量

@@ -1,5 +1,5 @@
 /*
- * RGB示例 - 基于Air001的ws2812驱动库
+ * 彩虹灯示例 - 基于Air001的ws2812驱动库
  * Created by 沈已成, 2025-04-17
  * Version: 1.0.1
  * 注意：需要选择HSI -> 16M, HCLK -> 16M
@@ -8,10 +8,8 @@
 #include "WS2812_SYC_Air001.h"
 
 #define ws2812_number 64      // 使用的灯珠数量(默认为64)
-#define ws2812_brightness 10  // 灯珠亮度(默认为10)
+#define ws2812_brightness 20  // 灯珠亮度(默认为10)
 #define ws2812_type RGB       // 颜色类型(默认为GRB)
-
-WS2812_COLOR color[] = {RGB_RED, RGB_GREEN, RGB_BLUE, RGB_YELLOW, RGB_WHITE, RGB_SKY_BLUE};
 
 SYC_WS2812 syc = SYC_WS2812(ws2812_number, ws2812_brightness, ws2812_type); // 声明对象
 
@@ -21,10 +19,5 @@ void setup() {
 }
 
 void loop() {
-  for(int i = 0;i < 6;i++)
-  {
-    syc.setAllWs2812Color(ws2812_number, color[i]);
-    syc.Ws2812_show();
-    delay(1000);
-  }
+  syc.Rainbow();
 }
